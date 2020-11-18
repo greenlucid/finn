@@ -1,6 +1,6 @@
 import personService from '../services/phonebook'
 
-const Person = ({person, setPersons}) => {
+const Person = ({person, setPersons, setErrorMessage}) => {
 
   const deleteHandler = (person) => () => {
     if (window.confirm(`Delete ${person.name}?`)) {
@@ -20,10 +20,11 @@ const Person = ({person, setPersons}) => {
   )
 }
 
-const Persons = ({persons, setPersons}) => (
+const Persons = ({persons, setPersons, setErrorMessage}) => (
   <ul>
     {persons.map(person => 
-      <Person person={person} setPersons={setPersons} key={person.id}/>)}
+      <Person person={person} setPersons={setPersons} setErrorMessage={setErrorMessage}
+        key={person.id}/>)}
   </ul>
 )
 

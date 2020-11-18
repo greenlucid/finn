@@ -3,6 +3,7 @@ import Persons from './Persons'
 import PersonForm from './PersonForm'
 import NameFilter from './NameFilter'
 import personService from '../services/phonebook'
+import Messager from './Messager'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,6 +11,8 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ nameFilter, setNameFilter ] = useState('')
+
+  const [ errorMessage, setErrorMessage ] = useState(null)
 
   useEffect(() => {
     console.log('effect');
@@ -38,18 +41,32 @@ const App = () => {
         personService.update(changedPerson.id, changedPerson)
           .then(response => {
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : response))
+            setErrorMessage({type: 'notice', text: `${newName} was updated`})
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
+          .catch(error => {
+            console.log(error)
+            setErrorMessage({type: 'error', text: `${changedPerson.name} was already deleted`})
           })
       }
     } else {
-      const newPerson = {
-        name: newName,
-        number: newNumber
+        const newPerson = {
+          name: newName,
+          number: newNumber
+        }
+        personService.create(newPerson)
+          .then(response => {
+            setPersons(persons.concat(newPerson))
+            setErrorMessage({type: 'notice', text: `${response.name} was created`})
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          })
+        setNewName('')
+        setNewNumber('')
       }
-      personService.create(newPerson)
-        .then(response => setPersons(persons.concat(newPerson)))
-      setNewName('')
-      setNewNumber('')
-    }
   }
 
   const personsToShow = nameFilter === ''
@@ -60,15 +77,15 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
       <NameFilter nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange} />
+      <Messager errorMessage={errorMessage} />
       <h2>Add new entry</h2>
-
       <PersonForm newName={newName} newNumber={newNumber}
         handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}
         addPerson={addPerson} 
       />
 
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} setPersons={setPersons}/>
+      <Persons persons={personsToShow} setPersons={setPersons} setErrorMessage={setErrorMessage}/>
     </div>
   )
 }
