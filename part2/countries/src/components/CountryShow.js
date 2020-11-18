@@ -47,11 +47,11 @@ const CapitalWeather = ({country}) => {
         setWeatherData(response.data)
       })
     }, [])
-
-  if(weatherData){
+  
+  if(weatherData && weatherData.success !== false){
     return(
       <div>
-        <h3>Weather in {country.capital}</h3> <br></br>
+        <h3>Weather in {country.capital}</h3>
         <b>Time: </b> {weatherData.location.localtime.slice(-5)} <br></br>
         <b>Temperature: </b> {weatherData.current.temperature} {' °C'} <br></br>
         <b>Wind: </b> {weatherData.current.wind_speed} {' km/h '} {weatherData.current.wind_dir} <br></br>
@@ -59,7 +59,7 @@ const CapitalWeather = ({country}) => {
       </div>
     )
   } else {
-    return(<div></div>)
+    return(<div><br></br>loading...</div>)
   }
 }
 
