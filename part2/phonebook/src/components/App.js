@@ -15,7 +15,6 @@ const App = () => {
   const [ errorMessage, setErrorMessage ] = useState(null)
 
   useEffect(() => {
-    console.log('effect');
     personService.getAll()
       .then(response => setPersons(response))
   }, [])
@@ -58,7 +57,7 @@ const App = () => {
         }
         personService.create(newPerson)
           .then(response => {
-            setPersons(persons.concat(newPerson))
+            setPersons(persons.concat(response))
             setErrorMessage({type: 'notice', text: `${response.name} was created`})
             setTimeout(() => {
               setErrorMessage(null)
