@@ -17,6 +17,7 @@ mongoose.connect(config.MONGODB_URI,
     logger.error('Error connecting to MongoDB:', error.message)
   })
 
+require('express-async-errors')
 const app = express()
 app.use(cors())
 app.use(express.static('build'))
