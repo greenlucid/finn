@@ -1,20 +1,14 @@
-const { isNull } = require('lodash')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const { favoriteBlog } = require('../utils/list_helper')
 const helper = require('./blog_test_helper')
+const userHelper = require('./user_test_helper')
 
 const api = supertest(app)
 
 beforeEach( async () => {
-  await Blog.deleteMany({})
-
-  const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
+  await helper.resetDatabase()
 })
 
 describe('GET', () => {
@@ -40,9 +34,25 @@ describe('GET', () => {
 })
 
 describe('POST', () => {
+  test('without valid token returns 401 and error containing token', async () => {
+    const token = "pepino"
+
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', "bearer " + token)
+      .send(helper.newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+    
+    expect(response.body.error).toMatch(/token/i)
+  })
+  
   test('to /api/blogs makes blogs have an extra blog', async () => {
+    const token = await userHelper.getToken(userHelper.newUser)
+
     await api
       .post('/api/blogs')
+      .set('Authorization', "bearer " + token)
       .send(helper.newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -51,6 +61,7 @@ describe('POST', () => {
 
     const blogsWithoutIds = response.body.map(blog => {
       delete blog.id
+      delete blog.user
       return blog
     })
 
@@ -59,10 +70,12 @@ describe('POST', () => {
   })
 
   test('of a blog without likes property defaults it to 0', async () => {
+    const token = await userHelper.getToken(userHelper.newUser)
     const newBlog = {...helper.newBlog, likes: undefined}
 
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', "bearer " + token)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -72,17 +85,20 @@ describe('POST', () => {
   })
 
   test('of a blog without title or url is 400 Bad Request and error', async () => {
+    const token = await userHelper.getToken(userHelper.newUser)
     const newBlogWithoutUrl = {...helper.newBlog, url: undefined }
     const newBlogWithoutTitle = {...helper.newBlog, title: undefined }
 
     await api
       .post('/api/blogs')
+      .set('Authorization', "bearer " + token)
       .send(newBlogWithoutUrl)
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
     await api
       .post('/api/blogs')
+      .set('Authorization', "bearer " + token)
       .send(newBlogWithoutTitle)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -90,10 +106,28 @@ describe('POST', () => {
 })
 
 describe('DELETE', () => {
-  test('returns 204 and removes an existing blog', async () => {
+  test('with no token returns 401', async () => {
     const blogToDelete = await helper.anyBlog()
     
     await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(401)
+  })
+  
+  test('with invalid token returns 401', async () => {
+    const token = "pepino"
+    const blogToDelete = await helper.anyBlog()
+    
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', "bearer " + token)
+      .expect(401)
+  })
+
+  test('returns 204 and removes an existing blog', async () => {
+    const token = await userHelper.getToken(userHelper.newUser)
+    const blogToDelete = await helper.anyBlog()
+    
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', "bearer " + token)
       .expect(204)
     
     const blogsAfterDelete = await helper.blogsInDb()
@@ -107,7 +141,7 @@ describe('PUT', () => {
   test('returns 200 and new blog data', async () => {
     const blogToUpdate = await helper.anyBlog()
     const newProperties = { likes: blogToUpdate.likes + 1 }
-    const expectedNewBlog = {...blogToUpdate, likes: blogToUpdate.likes + 1}
+    const expectedNewBlog = {...blogToUpdate, likes: blogToUpdate.likes + 1, user: blogToUpdate.user.toString()}
     const response = await api.put(`/api/blogs/${blogToUpdate.id}`)
       .send(newProperties)
       .expect(200)

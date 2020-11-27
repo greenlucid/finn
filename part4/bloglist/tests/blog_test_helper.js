@@ -1,4 +1,6 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const userHelper = require('./user_test_helper')
 
 const initialBlogs = [ 
   { title: 'React patterns', author: 'Michael Chan', url: 'https://reactpatterns.com/', likes: 7},
@@ -14,6 +16,21 @@ const newBlog = {
   author: 'Willy Wonka',
   url: 'https://chocolate.factcheck.gov/20201125/Chocolate-Correlation-Obesity',
   likes: 9
+}
+
+const resetDatabase = async () => {
+  await Blog.deleteMany({})
+  await User.deleteMany({})
+  const user = await User(userHelper.newUser).save()
+  // create blogs and link them to that user
+  const blogObjects = initialBlogs
+    .map(blog => new Blog({...blog, user: user._id}))
+  const promiseArray = blogObjects.map(blog => blog.save())
+  const savedBlogs = await Promise.all(promiseArray)
+  savedBlogs.forEach(blog => {
+    user.blogs = user.blogs.concat(blog._id)
+  })
+  await user.save()
 }
 
 const nonExistingId = async () => {
@@ -37,6 +54,7 @@ const anyBlog = async () => {
 module.exports = {
   initialBlogs,
   newBlog,
+  resetDatabase,
   nonExistingId,
   blogsInDb,
   anyBlog
