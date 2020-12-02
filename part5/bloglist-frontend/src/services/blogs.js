@@ -6,13 +6,26 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const create = async (blog, token) => {
-  const bearerToken = `bearer ${token}`
-  const config = {
-    headers: { Authorization: bearerToken }
+const tokenConfig = (token) => (
+  {
+    headers: { Authorization: `bearer ${token}` }
   }
-  const response = await axios.post(baseUrl, blog, config)
+)
+
+const create = async (blog, token) => {
+  const response = await axios.post(baseUrl, blog, tokenConfig(token))
   return response.data
 }
 
-export default { getAll, create }
+const like = async (blog) => {
+  const updatedFields = { likes: blog.likes + 1 }
+  const response = await axios.put(`${baseUrl}/${blog.id}`, updatedFields)
+  return response.data
+}
+
+const remove = async (blog, token) => {
+  const response = await axios.delete(`${baseUrl}/${blog.id}`, tokenConfig(token))
+  return response.data
+}
+
+export default { getAll, create, like, remove }

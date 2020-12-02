@@ -1,62 +1,64 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const BlogForm = ({user, blogs, setBlogs, showMessage}) => {
-  const blankForm = {title: '', author: '', url: ''}
+const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef }) => {
+  const blankForm = { title: '', author: '', url: '' }
   const [blog, setBlog] = useState(blankForm)
 
   const emptyFields = () => {
     setBlog(blankForm)
   }
 
-  const handleBlogPost = async (event) => {    
+  const handleBlogPost = async (event) => {
     event.preventDefault()
     try {
       const postedBlog = await blogService.create(blog, user.token)
       showMessage(`Blog "${blog.title}" was succesfully submitted`)
+      console.log(blogToggleRef)
+      blogToggleRef.current.toggleVisibility()
       setBlogs(blogs.concat(postedBlog))
       emptyFields()
-      
+
     } catch(error) {
       showMessage('There was a problem in submitting the blog')
     }
   }
   if (!user) {
-    return (<div></div>)
+    return (<div>You need to log in before posting a new blog</div>)
   } else {
-  return (
+    return (
       <div>
         <form onSubmit={handleBlogPost}>
           <div>
             title:
-            <input 
+            <input
               value={blog.title}
               type='text'
               name='Title'
-              onChange={({target}) => {
-                setBlog({...blog, title: target.value})
+              onChange={({ target }) => {
+                setBlog({ ...blog, title: target.value })
               }}
             />
           </div>
           <div>
             author:
-            <input 
+            <input
               value={blog.author}
               type='text'
               name='Author'
-              onChange={({target}) => {
-                setBlog({...blog, author: target.value})
+              onChange={({ target }) => {
+                setBlog({ ...blog, author: target.value })
               }}
             />
           </div>
           <div>
             url:
-            <input 
+            <input
               value={blog.url}
               type='text'
               name='Url'
-              onChange={({target}) => {
-                setBlog({...blog, url: target.value})
+              onChange={({ target }) => {
+                setBlog({ ...blog, url: target.value })
               }}
             />
           </div>

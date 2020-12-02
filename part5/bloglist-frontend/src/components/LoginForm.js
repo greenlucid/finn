@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import loginService from '../services/login'
 
 
-const LoginForm = ({user, setUser, showMessage}) => {
+const LoginForm = ({ user, setUser, showMessage }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [logged, setLogged] = useState(false)
@@ -21,7 +21,7 @@ const LoginForm = ({user, setUser, showMessage}) => {
       setUser(loginResponse)
       window.localStorage.setItem(
         'loggedBloglistUser', JSON.stringify(loginResponse)
-      ) 
+      )
       emptyFields()
       setLogged(true)
     } catch (error) {
@@ -29,9 +29,9 @@ const LoginForm = ({user, setUser, showMessage}) => {
     }
   }
 
-  const logout = (event) => {
+  const logout = () => {
     window.localStorage.removeItem('loggedBloglistUser')
-    
+
     setTimeout(() => {
       setLogged(false)
       setUser(null)
@@ -53,14 +53,14 @@ const LoginForm = ({user, setUser, showMessage}) => {
             Username:
             <input
               type='text' value={username} name='Username'
-              onChange={ ({target}) => (setUsername(target.value)) }
+              onChange={ ({ target }) => (setUsername(target.value)) }
             />
           </div>
           <div>
             Password:
             <input
               type='password' value={password} name='Password'
-              onChange={ ({target}) => (setPassword(target.value)) }
+              onChange={ ({ target }) => (setPassword(target.value)) }
             />
           </div>
           <button type='submit'>Login</button>

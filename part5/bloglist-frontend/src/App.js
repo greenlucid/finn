@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import Toggable from './components/Toggable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
@@ -9,10 +10,12 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
+  const blogToggleRef = useRef()
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs( blogs.sort((a, b) => (b.likes - a.likes)) )
+    )
   }, [])
 
   useEffect(() => {
@@ -34,11 +37,20 @@ const App = () => {
   return (
     <div>
       {errorMessage !== null && <h3>{errorMessage}</h3>}
-      <LoginForm user={user} setUser={setUser} showMessage={showMessage}/>
-      <BlogForm user={user} blogs={blogs} setBlogs={setBlogs} showMessage={showMessage}/>
+      <Toggable buttonLabel="Login">
+        <LoginForm user={user} setUser={setUser} showMessage={showMessage}/>
+      </Toggable>
+      <br/>
+      <Toggable buttonLabel="New Blog" ref={blogToggleRef}>
+        <BlogForm user={user} blogs={blogs} setBlogs={setBlogs} showMessage={showMessage}
+          blogToggleRef={blogToggleRef}
+        />
+      </Toggable>
       <h2>blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}
+          user={user} showMessage={showMessage}
+        />
       )}
     </div>
   )
