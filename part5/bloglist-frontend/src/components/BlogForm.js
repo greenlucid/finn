@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef }) => {
+const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef, postHandler }) => {
   const blankForm = { title: '', author: '', url: '' }
   const [blog, setBlog] = useState(blankForm)
 
@@ -11,16 +11,20 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef }) => {
 
   const handleBlogPost = async (event) => {
     event.preventDefault()
-    try {
-      const postedBlog = await blogService.create(blog, user.token)
-      showMessage(`Blog "${blog.title}" was succesfully submitted`)
-      console.log(blogToggleRef)
-      blogToggleRef.current.toggleVisibility()
-      setBlogs(blogs.concat(postedBlog))
-      emptyFields()
+    if (postHandler) {
+      postHandler(blog)
+    } else {
+      try {
+        const postedBlog = await blogService.create(blog, user.token)
+        showMessage(`Blog "${blog.title}" was succesfully submitted`)
+        console.log(blogToggleRef)
+        blogToggleRef.current.toggleVisibility()
+        setBlogs(blogs.concat(postedBlog))
+        emptyFields()
 
-    } catch(error) {
-      showMessage('There was a problem in submitting the blog')
+      } catch(error) {
+        showMessage('There was a problem in submitting the blog')
+      }
     }
   }
   if (!user) {
@@ -28,7 +32,7 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef }) => {
   } else {
     return (
       <div>
-        <form onSubmit={handleBlogPost}>
+        <form className='blogForm' onSubmit={handleBlogPost}>
           <div>
             title:
             <input
@@ -62,7 +66,7 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef }) => {
               }}
             />
           </div>
-          <button type="submit">Submit</button>
+          <button name='submitButton' type="submit">Submit</button>
         </form>
       </div>
     )

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, user, showMessage }) => {
+const Blog = ({ blog, blogs, setBlogs, user, showMessage, likeHandler }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const handleDetailsChange = () => {
@@ -45,7 +45,7 @@ const Blog = ({ blog, blogs, setBlogs, user, showMessage }) => {
   const blogDetails = () => (
     <div className="blogDetails">
       Url: <a href={blog.url}>{blog.url}</a>
-      <br/>Likes: {blog.likes} {' '} <button onClick={handleLike}>like</button>
+      <br/>Likes: {blog.likes} {' '} <button className='likeButton' onClick={likeHandler || handleLike}>like</button>
       <br/>Submitted by: {blog.user.name}
       {user.username === blog.user.username && removeButton()}
     </div>
@@ -60,9 +60,9 @@ const Blog = ({ blog, blogs, setBlogs, user, showMessage }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} - {blog.author}
-      {' '} <button onClick={handleDetailsChange}>{showDetails ? 'hide' : 'view' }</button>
+      {' '} <button className='detailsButton' onClick={handleDetailsChange}>{showDetails ? 'hide' : 'view' }</button>
       {showDetails === true && blogDetails()}
     </div>
   )
