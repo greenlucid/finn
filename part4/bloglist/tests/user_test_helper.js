@@ -15,7 +15,6 @@ const userWithDuplicatedUsername = {username: 's3s3s', password: 'bobobo', name:
 
 const resetDatabase = async () => {
   await User.deleteMany({})
-
   const userObjects = initialUsers.map(user => new User(user))
   const promiseArray = userObjects.map(user => user.save())
   await Promise.all(promiseArray)

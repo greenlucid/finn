@@ -60,7 +60,7 @@ blogRouter.delete('/:id', async (request, response, next) => {
     await user.save()
     response.status(204).end()
   } catch(error) {
-    error.name = "JsonWebTokenError"
+    error.name = 'JsonWebTokenError'
     next(error)
   }
   
