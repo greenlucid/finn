@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
-import Toggable from './components/Togglable'
+import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
@@ -11,6 +11,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   const blogToggleRef = useRef()
+  const loginToggleRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -22,8 +23,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
       setUser(JSON.parse(loggedUserJSON))
+    } else {
+      loginToggleRef.current.toggleVisibility()
     }
-  }, [])
+  }, [errorMessage])
 
   const showMessage = (message) => {
     setErrorMessage(message)
@@ -32,26 +35,26 @@ const App = () => {
     }, 5000)
   }
 
-  // Using that common React hack makes LoginForm unmount
-  // React complains because it has states so I went an alt route
   return (
     <div>
       {errorMessage !== null && <h3>{errorMessage}</h3>}
-      <Toggable buttonLabel="Login">
+      <Togglable buttonLabel="Login" ref={loginToggleRef} id='loginTogglable'>
         <LoginForm user={user} setUser={setUser} showMessage={showMessage}/>
-      </Toggable>
+      </Togglable>
       <br/>
-      <Toggable buttonLabel="New Blog" ref={blogToggleRef}>
+      <Togglable buttonLabel="New Blog" ref={blogToggleRef} id='blogFormTogglable'>
         <BlogForm user={user} blogs={blogs} setBlogs={setBlogs} showMessage={showMessage}
           blogToggleRef={blogToggleRef}
         />
-      </Toggable>
+      </Togglable>
       <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}
-          user={user} showMessage={showMessage}
-        />
-      )}
+      <div className='blogList'>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs}
+            user={user} showMessage={showMessage}
+          />
+        )}
+      </div>
     </div>
   )
 }

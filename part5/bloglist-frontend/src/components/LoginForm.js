@@ -47,23 +47,23 @@ const LoginForm = ({ user, setUser, showMessage }) => {
     )
   } else {
     return (
-      <div>
-        <form onSubmit={handleLogin}>
+      <div className='loginForm' name='loginFormDiv'>
+        <form onSubmit={handleLogin} id='loginForm' >
           <div>
             Username:
             <input
-              type='text' value={username} name='Username'
+              type='text' value={username} name='Username' id='username'
               onChange={ ({ target }) => (setUsername(target.value)) }
             />
           </div>
           <div>
             Password:
             <input
-              type='password' value={password} name='Password'
+              type='password' value={password} name='Password' id='password'
               onChange={ ({ target }) => (setPassword(target.value)) }
             />
           </div>
-          <button type='submit'>Login</button>
+          <button type='submit' id='login-button'>Login</button>
         </form>
       </div>
     )

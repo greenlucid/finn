@@ -17,7 +17,6 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef, postHandl
       try {
         const postedBlog = await blogService.create(blog, user.token)
         showMessage(`Blog "${blog.title}" was succesfully submitted`)
-        console.log(blogToggleRef)
         blogToggleRef.current.toggleVisibility()
         setBlogs(blogs.concat(postedBlog))
         emptyFields()
@@ -39,6 +38,7 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef, postHandl
               value={blog.title}
               type='text'
               name='Title'
+              id='title-input'
               onChange={({ target }) => {
                 setBlog({ ...blog, title: target.value })
               }}
@@ -50,6 +50,7 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef, postHandl
               value={blog.author}
               type='text'
               name='Author'
+              id='author-input'
               onChange={({ target }) => {
                 setBlog({ ...blog, author: target.value })
               }}
@@ -61,12 +62,13 @@ const BlogForm = ({ user, blogs, setBlogs, showMessage, blogToggleRef, postHandl
               value={blog.url}
               type='text'
               name='Url'
+              id='url-input'
               onChange={({ target }) => {
                 setBlog({ ...blog, url: target.value })
               }}
             />
           </div>
-          <button name='submitButton' type="submit">Submit</button>
+          <button name='submitButton' id='submitButton' type="submit">Submit</button>
         </form>
       </div>
     )

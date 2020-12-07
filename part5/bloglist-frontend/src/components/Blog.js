@@ -38,16 +38,30 @@ const Blog = ({ blog, blogs, setBlogs, user, showMessage, likeHandler }) => {
 
   const removeButton = () => (
     <div>
-      <button onClick={handleRemove}>remove</button>
+      <button className='removeButton' onClick={handleRemove}>remove</button>
     </div>
   )
+
+  const submittedBy = () => (
+    blog.user
+      ? `Submitted by: ${blog.user.name}`
+      : 'Submitter unknown'
+  )
+
+  const removeButtonShower = () => {
+    if (user) {
+      if (user.username === blog.user.username) {
+        return removeButton()
+      }
+    }
+  }
 
   const blogDetails = () => (
     <div className="blogDetails">
       Url: <a href={blog.url}>{blog.url}</a>
-      <br/>Likes: {blog.likes} {' '} <button className='likeButton' onClick={likeHandler || handleLike}>like</button>
-      <br/>Submitted by: {blog.user.name}
-      {user.username === blog.user.username && removeButton()}
+      <br/>Likes: <span className='blogLikes'>{blog.likes}</span> {' '} <button className='likeButton' onClick={likeHandler || handleLike}>like</button>
+      <br/>{submittedBy()}
+      {removeButtonShower()}
     </div>
   )
 
