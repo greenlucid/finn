@@ -19,10 +19,7 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-
+const anecdoteReducer = (state = initialState, action) => {
   switch(action.type) {
     case "RESET_ANECDOTES":
       return initialState
@@ -35,7 +32,6 @@ const reducer = (state = initialState, action) => {
           : anecdote
       ))
     default:
-      console.log(`${action.type} is not a known action`)
       return state
   }
 }
@@ -50,4 +46,4 @@ export const voteAnecdote = (id) => ({
   data: id
 })
 
-export default reducer
+export default anecdoteReducer
