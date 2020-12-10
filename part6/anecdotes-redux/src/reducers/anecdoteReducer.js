@@ -27,7 +27,7 @@ const anecdoteReducer = (state = initialState, action) => {
       return [...state, asObject(action.data)]
     case "VOTE_ANECDOTE":
       return state.map(anecdote => (
-        anecdote.id === action.data
+        anecdote.id === action.data.id
           ? {...anecdote, votes : anecdote.votes + 1}
           : anecdote
       ))
