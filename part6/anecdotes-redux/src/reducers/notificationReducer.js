@@ -15,10 +15,14 @@ const notificationReducer = (state = null, action) => {
     case "CREATE_NOTIFICATION":
       return action.notification
     // General actions
+    case "INIT_ANECDOTES":
+      return `Created a new set of anecdotes with ${action.data.length} elements`
+    case "DELETE_ALL_ANECDOTES":
+      return 'Deleted all anecdotes'
     case "CREATE_ANECDOTE":
-      return `You created '${action.data}'`
+      return `Created '${action.data.content}'`
     case "VOTE_ANECDOTE":
-      return `You voted '${action.data.content}'`
+      return `Voted '${action.data.content}'`
     default:
       return state
   }

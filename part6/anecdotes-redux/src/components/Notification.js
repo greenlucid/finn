@@ -20,7 +20,8 @@ const Notification = () => {
       const newTimeout = setTimeout(() => {dispatcher(clearNotification())}, 5000)
       setTimer(newTimeout)
     }
-  }, [dispatcher, notification])
+    
+  }, [dispatcher, notification]) // eslint-disable-line
 
   return (
     <div style={style}>
