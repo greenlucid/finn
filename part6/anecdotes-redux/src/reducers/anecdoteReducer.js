@@ -41,7 +41,7 @@ export const initAnecdotes = () => (
 
 export const createAnecdote = (anecdote) => (
   async dispatch => {
-    const newAnecdote = await anecdoteService.create(anecdote)
+    const newAnecdote = await anecdoteService.create(asObject(anecdote))
     dispatch({
       type: 'CREATE_ANECDOTE',
       data: newAnecdote
