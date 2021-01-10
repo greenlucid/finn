@@ -38,9 +38,20 @@ blogRouter.post('/', async (request, response, next) => {
     response.status(200).json(postedBlog)
     
   } catch(error) {
-    error.name = "JsonWebTokenError"
+    error.name = 'JsonWebTokenError'
     next(error)
   }
+})
+
+blogRouter.post('/:id/comments', async (request, response, next) => {
+  const body = request.body
+  const selectedBlog = await Blog.findById(request.params.id)
+  const updatedFields = {
+    comments: [ ...selectedBlog.comments, body.text ]
+  }
+  
+  const newBlog = await Blog.findByIdAndUpdate(request.params.id, updatedFields, {new: true})
+  response.json(newBlog)
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
@@ -63,11 +74,6 @@ blogRouter.delete('/:id', async (request, response, next) => {
     error.name = 'JsonWebTokenError'
     next(error)
   }
-  
-  
-  
-
-  
 })
 
 blogRouter.put('/:id', async (request, response, next) => {
