@@ -144,7 +144,7 @@ const resolvers = {
       const book = { ...args, id: uuid() }
       books = books.concat(book)
       if (!authors.map(author => author.name).includes(book.author)) {
-        authors = authors.concat({ name: book.author, born: null })
+        authors = authors.concat({ name: book.author, born: null, id: uuid() })
       }
       return book
     },
@@ -157,7 +157,7 @@ const resolvers = {
           author => author.name === args.name ? { ...author, born: args.born } : author
         )
       }
-      return { name: args.name, born: args.born }
+      return { ...matchedAuthor, born: args.born }
     }
   }
 }
