@@ -7,7 +7,7 @@ const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
 
-const MONGODB_URI = 'SECRET_URL'
+const MONGODB_URI = 'secret'
 
 console.log('connecting to', MONGODB_URI)
 
@@ -61,6 +61,7 @@ const typeDefs = gql`
     ): Author
     createUser(
       username: String!
+      favoriteGenre: String!
     ): User
     login(
       username: String!
@@ -165,7 +166,7 @@ const server = new ApolloServer({
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
       )
-      const currentUser = await User.findById(decodedToken.id).populate('friends')
+      const currentUser = await User.findById(decodedToken.id)
       return { currentUser }
     }
   }

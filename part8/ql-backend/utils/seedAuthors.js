@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Author = require('../models/author')
 const Book = require('../models/book')
 
-const MONGODB_URI = 'mongodb+srv://ad:gatocat@cluster0.hi4ss.mongodb.net/lib?retryWrites=true&w=majority'
+const MONGODB_URI = 'secret'
 
 console.log('connecting to', MONGODB_URI)
 
