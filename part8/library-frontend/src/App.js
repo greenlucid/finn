@@ -1,33 +1,40 @@
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
-
-import { gql, useQuery } from '@apollo/client'
+import NavBar from './components/NavBar'
+import Login from './components/Login'
+import ErrorShow from './components/ErrorShow'
+import Recommend from './components/Recommend'
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [token, setToken] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('library-user-token')
+    if ( token ) {
+      setToken(token)
+    }
+  }, [])
+
+  const handleLogout = () => {
+    setToken(null)
+    localStorage.clear()
+  }
 
   return (
     <div>
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-      </div>
+      <NavBar logged={token !== null} setPage={setPage} logout={handleLogout} />
+      <ErrorShow error={error} setError={setError} />
 
-      <Authors
-        show={page === 'authors'}
-      />
-
-      <Books
-        show={page === 'books'}
-      />
-
-      <NewBook
-        show={page === 'add'}
-      />
+      <Authors show={page === 'authors'} />
+      <Books show={page === 'books'} page={page} />
+      <Recommend show={page === 'recommend'} page={page} />
+      <NewBook show={page === 'add'} />
+      <Login show={page === 'login'} setToken={setToken} setError={setError} setPage={setPage} />
 
     </div>
   )

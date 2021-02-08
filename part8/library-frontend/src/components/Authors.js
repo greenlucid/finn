@@ -26,7 +26,7 @@ mutation changeYear($name: String!, $born: Int!) {
 }
 `
 
-const SetBirthyear = ({ authors }) => {
+const SetBirthyear = ({ authors, token }) => {
   const [ name, setName ] = useState(null)
   const [ born, setBorn ] = useState('')
 
@@ -80,7 +80,7 @@ const SetBirthyear = ({ authors }) => {
 const Authors = (props) => {
 
   const authorsQuery = useQuery(ALL_AUTHORS, {
-    pollInterval: 2000
+    pollInterval: 60000
   })
 
   if (!props.show) {

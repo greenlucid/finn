@@ -7,7 +7,7 @@ const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
 
-const MONGODB_URI = 'secret'
+const MONGODB_URI = '[REDACTED]'
 
 console.log('connecting to', MONGODB_URI)
 
@@ -132,7 +132,7 @@ const resolvers = {
       return author
     },
     createUser: (root, args) => {
-      const user = new User({ username: args.username })
+      const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
       return user.save()
         .catch(error => {
           throw new UserInputError(error.message, {
