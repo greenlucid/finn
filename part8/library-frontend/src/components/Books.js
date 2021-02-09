@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useSubscription } from '@apollo/client'
 
 const ALL_BOOKS = gql`
 query {
@@ -18,17 +18,39 @@ query {
 }
 `
 
+const BOOK_ADDED = gql`
+subscription {
+  bookAdded {
+    title
+    published
+    genres
+    id
+    author {
+      name
+    }
+  }
+}
+`
+
 const Books = (props) => {
   const [filter, setFilter] = useState(null)
-
-  const booksQuery = useQuery(ALL_BOOKS, {
-    pollInterval: 60000
-  })
+  const [books, setBooks] = useState([])
+  const booksQuery = useQuery(ALL_BOOKS)
 
   useEffect(() => {
     if (props.page === 'books')
     booksQuery.refetch()
   }, [props.page, filter]) //eslint-disable-line
+
+  useEffect(() => {
+    if (booksQuery.data && booksQuery.data.allBooks) {
+      setBooks(booksQuery.data.allBooks)
+    }
+  }, [booksQuery.data])
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => setBooks(books.concat(subscriptionData.data.bookAdded))
+  })
 
   if (!props.show) {
     return null
@@ -38,7 +60,6 @@ const Books = (props) => {
     return <div>loading...</div>
   }
 
-  const books = booksQuery.data.allBooks
   const shownBooks = filter
   ? books.filter(book => book.genres.includes(filter))
   : books
@@ -78,8 +99,8 @@ const Books = (props) => {
         </tbody>
       </table>
       <button onClick={() => setFilter(null)}>VIEW ALL</button>
-      {genres.map(g => 
-        <button onClick={() => setFilter(g)}>
+      {genres.map((g, index) => 
+        <button key={index} onClick={() => setFilter(g)}>
         {g}
         </button>
       )}

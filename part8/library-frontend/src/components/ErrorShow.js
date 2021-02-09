@@ -11,8 +11,8 @@ const ErrorShow = ({error, setError}) => {
 
   if (error) {
     return (
-      <div>
-        {error}
+      <div style={{ color: 'red' }}>
+        <h2><b>{error}</b></h2>
       </div>
     )
   }

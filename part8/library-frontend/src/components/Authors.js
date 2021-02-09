@@ -1,5 +1,5 @@
   
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
 
 
@@ -26,16 +26,28 @@ mutation changeYear($name: String!, $born: Int!) {
 }
 `
 
-const SetBirthyear = ({ authors, token }) => {
+const SetBirthyear = ({ authors, setError }) => {
   const [ name, setName ] = useState(null)
   const [ born, setBorn ] = useState('')
 
-  const [ editAuthor ] = useMutation(EDIT_AUTHOR)
+  const [ editAuthor ] = useMutation(EDIT_AUTHOR, {
+    onError: (error) => {
+      if(error.graphQLErrors[0]) {
+        setError(error.graphQLErrors[0].message)
+      } else {
+        console.log(error)
+      }
+    }
+  })
 
   const handleBirthyear = (event) => {
     event.preventDefault()
-    editAuthor({ variables: {name, born} })
-    setBorn('')
+    if (!born || born.length === 0) {
+      setError('You need to input a value')
+    } else {
+      editAuthor({ variables: {name, born} })
+      setBorn('')
+    }
   }
 
   if (!authors) {
@@ -50,7 +62,9 @@ const SetBirthyear = ({ authors, token }) => {
   }))
 
   if (name === null) {
-    setName(authorOptions[0].value)
+    if (authorOptions.length > 0) {
+      setName(authorOptions[0].value)
+    }
   }
 
   return (
@@ -83,6 +97,12 @@ const Authors = (props) => {
     pollInterval: 60000
   })
 
+  useEffect(() => {
+    if (props.page === 'authors') {
+      authorsQuery.refetch()
+    }
+  }, [props.page]) //eslint-disable-line
+
   if (!props.show) {
     return null
   }
@@ -112,7 +132,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-    <SetBirthyear authors={authors}/>
+    <SetBirthyear authors={authors} setError={props.setError} />
     </div>
   )
 }

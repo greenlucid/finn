@@ -30,10 +30,10 @@ const App = () => {
       <NavBar logged={token !== null} setPage={setPage} logout={handleLogout} />
       <ErrorShow error={error} setError={setError} />
 
-      <Authors show={page === 'authors'} />
+      <Authors show={page === 'authors'} page={page} setError={setError} />
       <Books show={page === 'books'} page={page} />
       <Recommend show={page === 'recommend'} page={page} />
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} setError={setError} />
       <Login show={page === 'login'} setToken={setToken} setError={setError} setPage={setPage} />
 
     </div>

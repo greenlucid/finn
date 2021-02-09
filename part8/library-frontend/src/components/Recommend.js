@@ -31,9 +31,7 @@ const Recommend = ({ show, page }) => {
   const [getFavBooks, favBooksQuery] = useLazyQuery(ALL_FAVORITE_GENRE_BOOKS)
 
   useEffect(() => {
-    console.log(favGenreQuery, favBooksQuery)
     if (favGenreQuery.data && favGenreQuery.data.me.favoriteGenre) {
-      console.log('success!')
       getFavBooks({ variables: { favoriteGenre: favGenreQuery.data.me.favoriteGenre } })
     }
   }, [favGenreQuery.data]) //eslint-disable-line
@@ -62,7 +60,7 @@ const Recommend = ({ show, page }) => {
       <p>books in your favourite genre <b>{genre}</b></p>
       <table>
         <tbody>
-          <tr>
+          <tr key='first-row'>
             <td></td>
             <td><b>author</b></td>
             <td><b>published</b></td>
