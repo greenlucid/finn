@@ -1,14 +1,18 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { Patient } from "../types";
-
-import { Action } from "./reducer";
+import { Diagnose, Patient } from "../types";
+import { DiagnoseAction } from "./diagnoseReducer";
+import { PatientAction } from "./patientReducer";
 
 export type State = {
   patients: { [id: string]: Patient };
+  diagnosis: { [code: string]: Diagnose };
 };
 
+export type Action = PatientAction | DiagnoseAction;
+
 const initialState: State = {
-  patients: {}
+  patients: {},
+  diagnosis: {}
 };
 
 export const StateContext = createContext<[State, React.Dispatch<Action>]>([
@@ -32,4 +36,5 @@ export const StateProvider: React.FC<StateProviderProps> = ({
     </StateContext.Provider>
   );
 };
+
 export const useStateValue = () => useContext(StateContext);
